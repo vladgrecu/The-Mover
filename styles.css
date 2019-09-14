@@ -1,0 +1,38 @@
+#playground{
+    height: 300px;
+    width: 600px;
+    background-color: rgb(165, 218, 213);
+    position: absolute;
+    top: calc(50% - 150px);
+    left: calc(50% - 300px);
+    border-right: 10px solid lightgreen;
+    border-radius: 5px;
+}
+h2{
+    position: absolute;
+    top: -50px;
+    left: 0px;
+}
+#player{
+    height: 15px;
+    width: 15px;
+    background-color: #fff;
+    position: absolute;
+    top: calc(50% - 15px);
+    left: calc(5% - 15px);
+    border: 0.1px solid red;
+}
+.obstacle{
+    width: 15px;
+    position: absolute;
+    border-radius: 1px;
+    background-color: rgb(100, 109, 109);
+}
+.obstacle *{
+    position: absolute;
+}
+#lifes{
+    position: absolute;
+    top: -40px;
+    right: 0px;
+}
