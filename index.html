@@ -5,11 +5,20 @@
     </head>
     <body>
         <div id="playground">
-            <h2>The Mover</h2>
-            <p id="lifes">Lifes Left: <span>&#x1F497</span><span>&#x1F497</span><span>&#x1F497</span> </p>
+            <h3>The Mover</h3>
+            <button id="startGame">Start Game</button>
+            <div id="safeTimer">
+                <p id="timerDisplay">Time Left: 30sec</p>
+            </div>
+            <p id="lifes">Lifes Left:
+                <span style= "visibility: visible">&#x1F497</span>
+                <span style= "visibility: visible">&#x1F497</span>
+                <span style= "visibility: visible">&#x1F497</span> 
+            </p>
             <div id="player"></div>
             <div id="obstacles">
             </div>
+            <div class="finishLine1"></div>
         </div>
     <script src="app.js"></script>
     </body>

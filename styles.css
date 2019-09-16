@@ -1,3 +1,9 @@
+@font-face {
+    font-family: 'SEGA LOGO FONT';
+    font-style: normal;
+    font-weight: normal;
+    src: local('SEGA.woff'), url('SEGA.woff') format('woff');
+    }
 #playground{
     height: 300px;
     width: 600px;
@@ -5,22 +11,40 @@
     position: absolute;
     top: calc(50% - 150px);
     left: calc(50% - 300px);
-    border-right: 10px solid lightgreen;
+    border: 1px solid grey;
     border-radius: 5px;
 }
-h2{
+.finishLine1{
+    height: 298px;
+    width: 20px;
     position: absolute;
-    top: -50px;
-    left: 0px;
+    top: 0;
+    right: 0;
+    border: 1px solid black;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px; 
+    background-image: url('flag.gif');
+    background-size: 60px;
+    background-repeat: repeat;
+    /* z-index: -1; */
+}
+h3{
+    font-family: 'SEGA LOGO FONT';
+    color: rgb(19, 134, 163);
+    font-weight: 100;
+    position: absolute;
+    top: -45px;
+    left: 230px;
 }
 #player{
     height: 15px;
     width: 15px;
-    background-color: #fff;
+    background-color: rgb(34, 212, 18);
     position: absolute;
     top: calc(50% - 15px);
     left: calc(5% - 15px);
-    border: 0.1px solid red;
+    border: 0.1px solid rgb(255, 255, 255);
+    z-index: 2;
 }
 .obstacle{
     width: 15px;
@@ -35,4 +59,52 @@ h2{
     position: absolute;
     top: -40px;
     right: 0px;
+    font-size: 15px;
+}
+#safeTimer{
+    position: absolute;
+    top: -42px;
+    right: 12px;
+}
+#timerDisplay{
+    margin-top: 0px;
+    text-align: center;
+    font-size: 15px;
+}
+#startGame{
+    background:#1AAB8A;
+    color:#fff;
+    border:none;
+    position:relative;
+    top: -25px;
+    height:20px;
+    font-size:1.1em;
+    padding:0 1em;
+    cursor:pointer;
+    transition:800ms ease all;
+    outline:none;
+}
+#startGame:hover{
+    background:#fff;
+    color:#1AAB8A;
+}
+#startGame:before,#startGame:after{
+    content:'';
+    position:absolute;
+    top:20;
+    right:0;
+    height:2px;
+    width:0;
+    background: #1AAB8A;
+    transition:400ms ease all;
+}
+#startGame:after{
+    right:inherit;
+    top:0;
+    left:0;
+    bottom:0;
+}
+#startGame:hover:before,#startGame:hover:after{
+    width:100%;
+    transition:800ms ease all;
 }
