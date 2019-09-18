@@ -7,7 +7,9 @@
 #playground{
     height: 300px;
     width: 600px;
-    background-color: rgb(165, 218, 213);
+    background-image: url('playground.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
     position: absolute;
     top: calc(50% - 150px);
     left: calc(50% - 300px);
@@ -26,20 +28,22 @@
     background-image: url('flag.gif');
     background-size: 60px;
     background-repeat: repeat;
-    /* z-index: -1; */
 }
 h3{
     font-family: 'SEGA LOGO FONT';
     color: rgb(19, 134, 163);
     font-weight: 100;
     position: absolute;
-    top: -45px;
-    left: 230px;
+    top: -43px;
+    left: 180px;
 }
 #player{
     height: 15px;
     width: 15px;
-    background-color: rgb(34, 212, 18);
+    background-image: url('player.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 50%;
     position: absolute;
     top: calc(50% - 15px);
     left: calc(5% - 15px);
@@ -50,7 +54,9 @@ h3{
     width: 15px;
     position: absolute;
     border-radius: 1px;
-    background-color: rgb(100, 109, 109);
+    background-image: url('brickwall.jpg');
+    background-size: 60px;
+    background-repeat: repeat;
 }
 .obstacle *{
     position: absolute;
@@ -63,13 +69,49 @@ h3{
 }
 #safeTimer{
     position: absolute;
-    top: -42px;
-    right: 12px;
-}
-#timerDisplay{
-    margin-top: 0px;
-    text-align: center;
+    top: -22px;
+    right: 180px;
     font-size: 15px;
+}
+#countdown-number {
+    color: black;
+    display: inline-block;
+    line-height: 20px;
+}
+#countdown {
+    position: absolute;
+    top: -102;
+    left: 70;
+    margin: auto;
+    margin-top: 100px;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+}
+svg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    transform: rotateY(-180deg) rotateZ(-90deg);
+}
+svg circle {
+    stroke-dasharray: 80px;
+    stroke-dashoffset: 0px;
+    stroke-linecap: round;
+    stroke-width: 0.5px;
+    stroke: black;
+    fill: none;
+    animation: countdown 30s linear infinite forwards;
+}
+@keyframes countdown {
+    from {
+    stroke-dashoffset: 0px;
+    }
+    to {
+    stroke-dashoffset: 80px;
+    }
 }
 #startGame{
     background:#1AAB8A;
