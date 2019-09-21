@@ -4,6 +4,44 @@
     font-weight: normal;
     src: local('SEGA.woff'), url('SEGA.woff') format('woff');
     }
+.overlay-text {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    display: none;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #FF6D00;
+    font-family: 'SEGA LOGO FONT', serif;
+    transition: background-color 500ms, font-size 500ms;
+}
+.overlay-text-small {
+    margin-top: 10px;
+    font-size: 20px;
+    color: white;
+    font-weight: 100;
+}
+.level{
+    font-family: sans-serif;
+}
+.overlay-text.visible {
+    display: flex;
+    animation: overlay-grow 500ms forwards;
+}
+@keyframes overlay-grow {
+    from {
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 0;
+    }
+    to {
+    background-color: rgba(0, 0, 0, .8);
+    font-size: 2em;
+    }
+}
 #playground{
     height: 300px;
     width: 600px;
@@ -16,7 +54,7 @@
     border: 1px solid grey;
     border-radius: 5px;
 }
-.finishLine1{
+.finishLine{
     height: 298px;
     width: 20px;
     position: absolute;
@@ -28,14 +66,6 @@
     background-image: url('flag.gif');
     background-size: 60px;
     background-repeat: repeat;
-}
-h3{
-    font-family: 'SEGA LOGO FONT';
-    color: rgb(19, 134, 163);
-    font-weight: 100;
-    position: absolute;
-    top: -43px;
-    left: 180px;
 }
 #player{
     height: 15px;
@@ -57,6 +87,7 @@ h3{
     background-image: url('brickwall.jpg');
     background-size: 60px;
     background-repeat: repeat;
+    z-index: 10;
 }
 .obstacle *{
     position: absolute;
@@ -87,31 +118,6 @@ h3{
     height: 20px;
     width: 20px;
     text-align: center;
-}
-svg {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 20px;
-    height: 20px;
-    transform: rotateY(-180deg) rotateZ(-90deg);
-}
-svg circle {
-    stroke-dasharray: 80px;
-    stroke-dashoffset: 0px;
-    stroke-linecap: round;
-    stroke-width: 0.5px;
-    stroke: black;
-    fill: none;
-    animation: countdown 30s linear infinite forwards;
-}
-@keyframes countdown {
-    from {
-    stroke-dashoffset: 0px;
-    }
-    to {
-    stroke-dashoffset: 80px;
-    }
 }
 #startGame{
     background:#1AAB8A;

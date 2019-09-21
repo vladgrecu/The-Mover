@@ -1,24 +1,101 @@
-class Player{
-    constructor(){
+class TheMover{
+    constructor(totalTime,lifes){
         this.domElement = document.getElementById('player');
+        this.totalTime = totalTime;
+        this.timeRemaining = totalTime;
+        this.timer = document.getElementById('countdown-number');
+        this.life = lifes;
+        this.lifesRemaining = lifes;
+        this.hearth = Array.from(document.getElementsByClassName('life'));
         this.playerLeftBorder = 16;
         this.playerRightBorder = this.playerLeftBorder+15;
         this.playerTopBorder = 136;
         this.playerBottomBorder = this.playerTopBorder+15;
-        this.hearth = document.querySelectorAll('span');
-        this.life = 3;
         this.obstacles = document.getElementById('obstacles');
-        this.obstacleLeft = 60;
-        this.arrayOfObstacles = [];
+        this.firstObstacle = 120;
         this.obstaclesFromTop =[];
         this.obstaclesFromBottom = [];
-        for (let i = 0; i < 8; i++){
-            this.arrayOfObstacles.push(this.createObstacles(this.obstacleLeft));
+        this.difficulty = 1;
+        for (let i = 0; i < this.difficulty; i++){
+            this.createObstacles(this.firstObstacle);
         }
-        this.listenToDirection();
-        console.log(this.arrayOfObstacles);
-    };
-    moveObstacles = (topObstacles,bottomoObstacles) =>{
+        this.arrayOfObstacles =Array.from(document.getElementsByClassName('obstacle'));
+        this.level = 1;
+    }
+    startGame(){
+        this.timeRemaining = this.totalTime;
+        this.timer.innerText = this.timeRemaining;
+        setTimeout(() => {
+            // this.audioController.startMusic();
+            this.countdown = this.startCountdown();
+            if(this.level>8 && this.level<=16){
+                this.obstacleMovement = this.gameModeVertical()
+            }
+            if(this.level>16){
+                this.obstacleMovement = this.gameModeHorizontal()
+            }
+            document.addEventListener('keydown', this.movePlayer);
+        }, 500);
+    }
+    startCountdown(){
+        return setInterval(() => {
+            this.timeRemaining--;
+            this.timer.innerText = this.timeRemaining;
+            if(this.timeRemaining === 0){
+                this.gameOver();
+            }
+        }, 1000);
+    }
+    gameOver(){
+        clearInterval(this.countdown);
+        clearInterval(this.obstacleMovement);
+        document.removeEventListener('keydown',this.movePlayer);
+        // this.audioController.gameOver();
+        document.getElementById('game-over-text').classList.add('visible');
+        document.getElementById('game-over-level').innerText = `Level ${this.level}`;
+        this.resetPlayerPosition();
+    }
+    victory(){
+        clearInterval(this.countdown);
+        clearInterval(this.obstacleMovement);
+        // this.audioController.victory();
+        document.getElementById('victory-text').classList.add('visible');
+        document.removeEventListener('keydown',this.movePlayer);
+        document.getElementById('victory-level').innerText = `Level ${this.level} COMPLETE`;
+        this.resetPlayerPosition();
+        this.resetObstaclePosition();
+        this.level++;
+        console.log(this.level);
+    }
+    createObstacles(previousObstacle){
+        let obstacle = document.createElement('div');
+        obstacle.classList.add('obstacle');
+        obstacle.style.left=previousObstacle;
+        obstacle.style.height = Math.floor(Math.random()*200)+50;
+        let topOrBottom=[0, 300 - parseInt(obstacle.style.height)];
+        obstacle.style.top = topOrBottom[Math.floor(Math.random()*2)];
+        this.obstacles.appendChild(obstacle);
+        
+        if(parseInt(obstacle.style.top)<=0){
+            this.obstaclesFromTop.push(obstacle);
+        }
+        if(parseInt(obstacle.style.top)+parseInt(obstacle.style.height)>=300){
+            this.obstaclesFromBottom.push(obstacle);
+        }
+        this.firstObstacle = previousObstacle+Math.floor(Math.random()*20)+50;
+        return obstacle
+    }
+    moveObstaclesHorizontal = ()=>{
+        this.checkColision();
+        this.arrayOfObstacles.forEach(obstacle =>{
+            obstacle.style.left=parseInt(obstacle.style.left)-1;
+            if(parseInt(obstacle.style.left)===0){
+                obstacle.remove();
+                this.arrayOfObstacles.push(this.createObstacles(580))
+            }
+        })
+    }
+    moveObstaclesVertically = (topObstacles,bottomoObstacles) =>{
         this.checkColision();
         bottomoObstacles.forEach((obstacle,i) =>{
             obstacle.style.top=parseInt(obstacle.style.top)-1;
@@ -35,8 +112,18 @@ class Player{
             }
         })
     }
-    tryAgain(){
-        alert('You Lose');
+    gameModeHorizontal = ()=>{
+        return setInterval(() => {
+            this.moveObstaclesHorizontal();
+        }, 40);
+    }
+    gameModeVertical = ()=> {
+        return setInterval(() => {
+            this.moveObstaclesVertically(this.obstaclesFromTop,this.obstaclesFromBottom);
+        }, 15);
+        
+    }
+    resetPlayerPosition(){
         this.playerTopBorder = 136;
         this.playerBottomBorder = this.playerTopBorder+15;
         this.playerLeftBorder = 16;
@@ -46,38 +133,20 @@ class Player{
         this.life = 3;
         this.hearth.forEach(life =>life.style.visibility = 'visible')
         document.getElementById('startGame').disabled = false;
-        // document.getElementById('startGame').style.height = 300;
-        // document.getElementById('startGame').style.width = 600;
     }
-    timer = () => {
-        document.addEventListener('keydown', this.movePlayer);
-        let sec = 30;
-        let countdownNumberEl = document.getElementById('countdown-number');
-        countdownNumberEl.textContent = sec;
-        let obstacleLet = 15000;
-        let obstacleTimer = setInterval(() => {
-            obstacleLet-=10;
-            this.moveObstacles(this.obstaclesFromTop,this.obstaclesFromBottom);
-            if (obstacleLet<0){
-                clearInterval(obstacleTimer);
-            }
-        }, 20);
-        let timer = setInterval(()=>{
-            --sec;
-            countdownNumberEl.textContent = sec;
-            if (sec!==30){
-                document.getElementById('startGame').disabled = true;
-                document.getElementById('startGame').innerText = 'GO JOHNY GO!!!'
-            }
-            console.log('Timer is:',sec);
-            if (sec < 0) {
-                countdownNumberEl.textContent = 0;
-                clearInterval(timer);
-                this.tryAgain();
-                document.getElementById('startGame').innerText = 'Try Again!!!'
-            }
-        }, 1000,this.tryAgain);
-        console.log(sec);
+    resetObstaclePosition(){
+        this.difficulty++
+        this.arrayOfObstacles.forEach(obstacle => obstacle.remove());
+        this.firstObstacle = 120;
+        this.obstaclesFromTop =[];
+        this.obstaclesFromBottom = [];
+        for (let i = 0; i < this.difficulty; i++){
+            this.createObstacles(this.firstObstacle);
+        }
+        if(this.difficulty % 8 ===0){
+            this.difficulty = 0;
+        }
+        this.arrayOfObstacles =Array.from(document.getElementsByClassName('obstacle'));
     }
     checkColision(){
         for(let i=0; i<this.arrayOfObstacles.length;i++){
@@ -87,103 +156,98 @@ class Player{
             obstacle.top = parseInt(obstacle.style.top);
             obstacle.bottom = 300-parseInt(obstacle.style.height)-parseInt(obstacle.style.top);
             obstacle.height = parseInt(obstacle.style.height);
-            if((this.playerLeftBorder <= obstacle.right)                          
-            &&(this.playerRightBorder >= obstacle.left)                            
-            &&(     
-            (obstacle.top === 300-obstacle.height && this.playerBottomBorder >= obstacle.top)
-            ||(this.playerBottomBorder >= obstacle.top && obstacle.top+obstacle.height>=this.playerTopBorder))) {   
+            if(
+            (this.playerLeftBorder <= obstacle.right)&&
+            (this.playerRightBorder >= obstacle.left)&&
+            ((obstacle.top === 300-obstacle.height && this.playerBottomBorder >= obstacle.top)||
+            (this.playerBottomBorder >= obstacle.top && obstacle.top+obstacle.height>=this.playerTopBorder))
+            ) {   
                 this.life--;
                 console.log(`Colission with obstacle #${i+1}`);
                 this.hearth[this.life].style.visibility = 'hidden';
                 if (this.life === 0){
                     setTimeout(() => {
-                        this.tryAgain();
+                        this.resetPlayerPosition();
                     }, 20);       
                 }
                 return true
             }     
-        }
-        return false
-    }
-    createObstacles(left){
-        let obstacle = document.createElement('div');
-        obstacle.classList.add('obstacle');
-        obstacle.style.left=left;
-        obstacle.style.height = Math.floor(Math.random()*200)+50;
-        let topOrBottom=[0, 300 - parseInt(obstacle.style.height)];
-        obstacle.style.top = topOrBottom[Math.floor(Math.random()*2)];
-        this.obstacles.appendChild(obstacle);
-
-        if(parseInt(obstacle.style.top)<=0){
-            this.obstaclesFromTop.push(obstacle);
-        }
-        if(parseInt(obstacle.style.top)+parseInt(obstacle.style.height)>=300){
-            this.obstaclesFromBottom.push(obstacle);
-        }
-        this.obstacleLeft = left+33+Math.floor(Math.random()*50);
-        return obstacle
-    }
-    listenToDirection(){
-        document.getElementById('startGame').addEventListener('click', this.timer);
-    }
-    activateGameFace(){
-
-    }
-    movePlayer = (event) =>{
-        if (event.key === "ArrowUp"){
-            this.playerTopBorder-=2;
-            this.playerBottomBorder-=2;
-            this.domElement.style.top =this.playerTopBorder;
-            if(this.checkColision()){
-                this.playerTopBorder+=2;
-                this.playerBottomBorder+=2;
-                this.domElement.style.top=this.playerTopBorder;
-            };
-            if(this.playerTopBorder <= 2){
-                this.playerTopBorder = 2;
-            };
-        }
-        if (event.key === "ArrowDown"){
-            this.playerTopBorder+=2;
-            this.playerBottomBorder+=2;
-            this.domElement.style.top =this.playerTopBorder;
-            if(this.checkColision()){
-                this.playerTopBorder-=2;
-                this.playerBottomBorder-=2;
-                this.domElement.style.top=this.playerTopBorder;
-            };
-            if(this.playerTopBorder >= 282){
-                this.playerTopBorder = 282;
-            };
-        }
-        if (event.key === "ArrowLeft"){
-            this.playerLeftBorder-=2;
-            this.playerRightBorder-=2;
-            this.domElement.style.left =this.playerLeftBorder;
-            if(this.checkColision()){
-                this.playerLeftBorder+=2;
-                this.playerRightBorder+=2;
-                this.domElement.style.left=this.playerLeftBorder;
-            };
-            if(this.playerLeftBorder <= 2){
-                this.playerLeftBorder = 2;
             }
+            return false
         }
-        if (event.key === "ArrowRight"){
-            this.playerLeftBorder+=2;
-            this.playerRightBorder+=2;
-            this.domElement.style.left =this.playerLeftBorder;
-            if(this.checkColision()){
-                this.playerLeftBorder-=2;
-                this.playerRightBorder-=2;
-                this.domElement.style.left=this.playerLeftBorder;
-            };
+        movePlayer = (event) =>{
+            if (event.key === "ArrowUp"){
+                this.playerTopBorder-=4;
+                this.playerBottomBorder-=4;
+                if(this.checkColision()){
+                    this.playerTopBorder+=4;
+                    this.playerBottomBorder+=4;
+                };
+                if(this.playerTopBorder <= 2){
+                    this.playerTopBorder = 2;
+                };
+            }
+            if (event.key === "ArrowDown"){
+                this.playerTopBorder+=4;
+                this.playerBottomBorder+=4;
+                if(this.checkColision()){
+                    this.playerTopBorder-=4;
+                    this.playerBottomBorder-=4;
+                };
+                if(this.playerTopBorder >= 282){
+                    this.playerTopBorder = 282;
+                };
+            }
+            if (event.key === "ArrowLeft"){
+                this.playerLeftBorder-=4;
+                this.playerRightBorder-=4;
+                if(this.checkColision()){
+                    this.playerLeftBorder+=4;
+                    this.playerRightBorder+=4;
+                };
+                if(this.playerLeftBorder <= 2){
+                    this.playerLeftBorder = 2;
+                }
+            }
+            if (event.key === "ArrowRight"){
+                this.playerLeftBorder+=4;
+                this.playerRightBorder+=4;
+                if(this.checkColision()){
+                    this.playerLeftBorder-=4;
+                    this.playerRightBorder-=4;
+                };
+            }
+            this.domElement.style.top=this.playerTopBorder;
+            this.domElement.style.left=this.playerLeftBorder;
+            
+            if(this.playerLeftBorder >= 586){
+            this.victory();
         }
-        if(this.playerLeftBorder >= 586){
-            alert('You Win!!!');
-            location.reload();
-        }
-        this.domElement.style.backgroundImage ='url(playermoving.png)'
     }
 }
-new Player();
+if (document.readyState == 'loading') {
+    document.addEventListener('DOMContentLoaded', ready);
+} else {
+    ready();
+}
+
+function ready() {
+    let overlays = Array.from(document.getElementsByClassName('overlay-text'));
+    let game = new TheMover(45, 3);
+    
+    overlays.forEach(overlay => {
+        overlay.addEventListener('click', () => {
+            overlay.classList.remove('visible');
+            game.startGame();
+        });
+    });
+    document.addEventListener('keyup', (event) => {
+        console.log(event.key)
+        if(event.key ==='Enter'){
+            overlays.forEach(overlay => {
+                overlay.classList.remove('visible');
+            })
+            game.startGame();
+        }
+    });
+}
