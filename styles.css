@@ -70,9 +70,10 @@
 #player{
     height: 15px;
     width: 15px;
-    background-image: url('player.png');
+    /* background-image: url('player.png');
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat; */
+    background-color: yellow;
     border-radius: 50%;
     position: absolute;
     top: calc(50% - 15px);
