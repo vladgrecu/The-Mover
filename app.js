@@ -7,12 +7,12 @@ class TheMover{
         this.life = lifes;
         this.lifesRemaining = lifes;
         this.hearth = Array.from(document.getElementsByClassName('life'));
-        this.playerLeftBorder = 16;
+        this.playerLeftBorder = 0;
         this.playerRightBorder = this.playerLeftBorder+15;
         this.playerTopBorder = 136;
         this.playerBottomBorder = this.playerTopBorder+15;
         this.obstacles = document.getElementById('obstacles');
-        this.firstObstacle = 120;
+        this.firstObstacle = 563;
         this.obstaclesFromTop =[];
         this.obstaclesFromBottom = [];
         this.difficulty = 1;
@@ -25,6 +25,8 @@ class TheMover{
     startGame(){
         this.timeRemaining = this.totalTime;
         this.timer.innerText = this.timeRemaining;
+        document.addEventListener('keydown', this.movePlayer);
+        document.getElementById('startGame').innerText = `LEVEL ${this.level}`;
         setTimeout(() => {
             // this.audioController.startMusic();
             this.countdown = this.startCountdown();
@@ -34,7 +36,22 @@ class TheMover{
             if(this.level>16){
                 this.obstacleMovement = this.gameModeHorizontal()
             }
-            document.addEventListener('keydown', this.movePlayer);
+            if(this.level>24){
+                this.horizontal = this.gameModeVertical();
+                this.vertical = this.gameModeHorizontal();
+            }
+            if(this.level === 33){
+                const endgame = document.getElementById('game-over-text');
+                endgame.innerText = `CONGRATULATIONS!!! YOU ARE A GOD AT THIS GAME`;
+                const reset = document.createElement('button');
+                reset.innerText = 'Play Again?';
+                endgame.appendChild(reset);
+                reset.addEventListener('click',function(){
+                    location.reload();
+                })
+                this.gameOver();
+                ready();
+            }
         }, 500);
     }
     startCountdown(){
@@ -49,6 +66,8 @@ class TheMover{
     gameOver(){
         clearInterval(this.countdown);
         clearInterval(this.obstacleMovement);
+        clearInterval(this.horizontal);
+        clearInterval(this.vertical);
         document.removeEventListener('keydown',this.movePlayer);
         // this.audioController.gameOver();
         document.getElementById('game-over-text').classList.add('visible');
@@ -58,6 +77,8 @@ class TheMover{
     victory(){
         clearInterval(this.countdown);
         clearInterval(this.obstacleMovement);
+        clearInterval(this.horizontal);
+        clearInterval(this.vertical);
         // this.audioController.victory();
         document.getElementById('victory-text').classList.add('visible');
         document.removeEventListener('keydown',this.movePlayer);
@@ -71,7 +92,7 @@ class TheMover{
         let obstacle = document.createElement('div');
         obstacle.classList.add('obstacle');
         obstacle.style.left=previousObstacle;
-        obstacle.style.height = Math.floor(Math.random()*200)+50;
+        obstacle.style.height = Math.floor(Math.random()*150)+70;
         let topOrBottom=[0, 300 - parseInt(obstacle.style.height)];
         obstacle.style.top = topOrBottom[Math.floor(Math.random()*2)];
         this.obstacles.appendChild(obstacle);
@@ -82,7 +103,8 @@ class TheMover{
         if(parseInt(obstacle.style.top)+parseInt(obstacle.style.height)>=300){
             this.obstaclesFromBottom.push(obstacle);
         }
-        this.firstObstacle = previousObstacle+Math.floor(Math.random()*20)+50;
+        this.firstObstacle = previousObstacle-Math.floor(Math.random()*20)-65;
+        console.log(this.firstObstacle);
         return obstacle
     }
     moveObstaclesHorizontal = ()=>{
@@ -120,13 +142,13 @@ class TheMover{
     gameModeVertical = ()=> {
         return setInterval(() => {
             this.moveObstaclesVertically(this.obstaclesFromTop,this.obstaclesFromBottom);
-        }, 15);
+        }, 20);
         
     }
     resetPlayerPosition(){
         this.playerTopBorder = 136;
         this.playerBottomBorder = this.playerTopBorder+15;
-        this.playerLeftBorder = 16;
+        this.playerLeftBorder = 0;
         this.playerRightBorder = this.playerLeftBorder+15;
         this.domElement.style.top = this.playerTopBorder;
         this.domElement.style.left = this.playerLeftBorder;
@@ -137,7 +159,7 @@ class TheMover{
     resetObstaclePosition(){
         this.difficulty++
         this.arrayOfObstacles.forEach(obstacle => obstacle.remove());
-        this.firstObstacle = 120;
+        this.firstObstacle = 563;
         this.obstaclesFromTop =[];
         this.obstaclesFromBottom = [];
         for (let i = 0; i < this.difficulty; i++){
@@ -240,14 +262,5 @@ function ready() {
             overlay.classList.remove('visible');
             game.startGame();
         });
-    });
-    document.addEventListener('keyup', (event) => {
-        console.log(event.key)
-        if(event.key ==='Enter'){
-            overlays.forEach(overlay => {
-                overlay.classList.remove('visible');
-            })
-            game.startGame();
-        }
     });
 }

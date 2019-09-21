@@ -25,6 +25,11 @@
     color: white;
     font-weight: 100;
 }
+.info{
+    font-family: sans-serif;
+    color: white;
+    font-size: 15px;
+}
 .level{
     font-family: sans-serif;
 }
@@ -38,7 +43,7 @@
     font-size: 0;
     }
     to {
-    background-color: rgba(0, 0, 0, .8);
+    background-color: rgba(0, 0, 0, 0.9);
     font-size: 2em;
     }
 }
@@ -70,14 +75,13 @@
 #player{
     height: 15px;
     width: 15px;
-    /* background-image: url('player.png');
+    background-image: url('player.png');
     background-size: cover;
-    background-repeat: no-repeat; */
-    background-color: yellow;
+    background-repeat: no-repeat;
     border-radius: 50%;
     position: absolute;
     top: calc(50% - 15px);
-    left: calc(5% - 15px);
+    left: 0;
     border: 0.1px solid rgb(255, 255, 255);
     z-index: 2;
 }
@@ -94,12 +98,14 @@
     position: absolute;
 }
 #lifes{
+    font-family: serif;
     position: absolute;
     top: -40px;
     right: 0px;
     font-size: 15px;
 }
 #safeTimer{
+    font-family: serif;
     position: absolute;
     top: -22px;
     right: 180px;
