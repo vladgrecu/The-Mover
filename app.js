@@ -1,3 +1,31 @@
+class AudioController {
+    constructor() {
+        this.bgMusic = new Audio('./music/gameMusic.mp3');
+        this.victorySound = new Audio('./music/victory.mp3');
+        this.gameOverSound = new Audio('./music/gameOver.mp3');
+        this.bgMusic.volume = 0.5;
+        this.bgMusic.loop = true;
+    }
+    startMusic() {
+        this.victorySound.pause();
+        this.victorySound.currentTime = 0;
+        this.gameOverSound.pause();
+        this.gameOverSound.currentTime = 0;
+        this.bgMusic.play();
+    }
+    stopMusic() {
+        this.bgMusic.pause();
+        this.bgMusic.currentTime = 0;
+    }
+    victory() {
+        this.stopMusic();
+        this.victorySound.play();
+    }
+    gameOver() {
+        this.stopMusic();
+        this.gameOverSound.play();
+    }
+}
 class TheMover{
     constructor(totalTime,lifes){
         this.domElement = document.getElementById('player');
@@ -20,7 +48,8 @@ class TheMover{
             this.createObstacles(this.firstObstacle);
         }
         this.arrayOfObstacles =Array.from(document.getElementsByClassName('obstacle'));
-        this.level = 1;
+        this.level =1;
+        this.audioController = new AudioController();
     }
     startGame(){
         this.timeRemaining = this.totalTime;
@@ -28,7 +57,7 @@ class TheMover{
         document.addEventListener('keydown', this.movePlayer);
         document.getElementById('startGame').innerText = `LEVEL ${this.level}`;
         setTimeout(() => {
-            // this.audioController.startMusic();
+            this.audioController.startMusic();
             this.countdown = this.startCountdown();
             if(this.level>8 && this.level<=16){
                 this.obstacleMovement = this.gameModeVertical()
@@ -42,9 +71,10 @@ class TheMover{
             }
             if(this.level === 33){
                 const endgame = document.getElementById('game-over-text');
-                endgame.innerText = `CONGRATULATIONS!!! YOU ARE A GOD AT THIS GAME`;
+                endgame.innerText = `YOU ARE A GOD AT THIS GAME`;
                 const reset = document.createElement('button');
                 reset.innerText = 'Play Again?';
+                reset.style.marginTop = 20 +"px";
                 endgame.appendChild(reset);
                 reset.addEventListener('click',function(){
                     location.reload();
@@ -69,17 +99,21 @@ class TheMover{
         clearInterval(this.horizontal);
         clearInterval(this.vertical);
         document.removeEventListener('keydown',this.movePlayer);
-        // this.audioController.gameOver();
+        this.audioController.gameOver();
         document.getElementById('game-over-text').classList.add('visible');
         document.getElementById('game-over-level').innerText = `Level ${this.level}`;
         this.resetPlayerPosition();
+        this.loseLife();
+        if(this.life === 0){
+            location.reload();
+        }
     }
     victory(){
         clearInterval(this.countdown);
         clearInterval(this.obstacleMovement);
         clearInterval(this.horizontal);
         clearInterval(this.vertical);
-        // this.audioController.victory();
+        this.audioController.victory();
         document.getElementById('victory-text').classList.add('visible');
         document.removeEventListener('keydown',this.movePlayer);
         document.getElementById('victory-level').innerText = `Level ${this.level} COMPLETE`;
@@ -104,7 +138,6 @@ class TheMover{
             this.obstaclesFromBottom.push(obstacle);
         }
         this.firstObstacle = previousObstacle-Math.floor(Math.random()*20)-65;
-        console.log(this.firstObstacle);
         return obstacle
     }
     moveObstaclesHorizontal = ()=>{
@@ -152,9 +185,6 @@ class TheMover{
         this.playerRightBorder = this.playerLeftBorder+15;
         this.domElement.style.top = this.playerTopBorder;
         this.domElement.style.left = this.playerLeftBorder;
-        this.life = 3;
-        this.hearth.forEach(life =>life.style.visibility = 'visible')
-        document.getElementById('startGame').disabled = false;
     }
     resetObstaclePosition(){
         this.difficulty++
@@ -184,78 +214,56 @@ class TheMover{
             ((obstacle.top === 300-obstacle.height && this.playerBottomBorder >= obstacle.top)||
             (this.playerBottomBorder >= obstacle.top && obstacle.top+obstacle.height>=this.playerTopBorder))
             ) {   
-                this.life--;
                 console.log(`Colission with obstacle #${i+1}`);
-                this.hearth[this.life].style.visibility = 'hidden';
-                if (this.life === 0){
-                    setTimeout(() => {
-                        this.resetPlayerPosition();
-                    }, 20);       
-                }
+                this.resetPlayerPosition();
                 return true
             }     
             }
             return false
         }
-        movePlayer = (event) =>{
-            if (event.key === "ArrowUp"){
-                this.playerTopBorder-=4;
-                this.playerBottomBorder-=4;
-                if(this.checkColision()){
-                    this.playerTopBorder+=4;
-                    this.playerBottomBorder+=4;
-                };
-                if(this.playerTopBorder <= 2){
-                    this.playerTopBorder = 2;
-                };
+    loseLife =()=>{
+        this.life--;
+        this.hearth[this.life].style.visibility = 'hidden';
+    }
+    movePlayer = (event) =>{
+        if (event.key === "ArrowUp"){
+            this.playerTopBorder-=4;
+            this.playerBottomBorder-=4;
+            if(this.playerTopBorder <= 2){
+                this.playerTopBorder = 2;
+            };
+        }
+        if (event.key === "ArrowDown"){
+            this.playerTopBorder+=4;
+            this.playerBottomBorder+=4;
+            if(this.playerTopBorder >= 282){
+                this.playerTopBorder = 282;
+            };
+        }
+        if (event.key === "ArrowLeft"){
+            this.playerLeftBorder-=4;
+            this.playerRightBorder-=4;
+            if(this.playerLeftBorder <= 2){
+                this.playerLeftBorder = 2;
             }
-            if (event.key === "ArrowDown"){
-                this.playerTopBorder+=4;
-                this.playerBottomBorder+=4;
-                if(this.checkColision()){
-                    this.playerTopBorder-=4;
-                    this.playerBottomBorder-=4;
-                };
-                if(this.playerTopBorder >= 282){
-                    this.playerTopBorder = 282;
-                };
-            }
-            if (event.key === "ArrowLeft"){
-                this.playerLeftBorder-=4;
-                this.playerRightBorder-=4;
-                if(this.checkColision()){
-                    this.playerLeftBorder+=4;
-                    this.playerRightBorder+=4;
-                };
-                if(this.playerLeftBorder <= 2){
-                    this.playerLeftBorder = 2;
-                }
-            }
-            if (event.key === "ArrowRight"){
-                this.playerLeftBorder+=4;
-                this.playerRightBorder+=4;
-                if(this.checkColision()){
-                    this.playerLeftBorder-=4;
-                    this.playerRightBorder-=4;
-                };
-            }
-            this.domElement.style.top=this.playerTopBorder;
-            this.domElement.style.left=this.playerLeftBorder;
+        }
+        if (event.key === "ArrowRight"){
+            this.playerLeftBorder+=4;
+            this.playerRightBorder+=4;
+        }
+        this.domElement.style.top=this.playerTopBorder;
+        this.domElement.style.left=this.playerLeftBorder;
+        this.checkColision();
             
-            if(this.playerLeftBorder >= 586){
+        if(this.playerLeftBorder >= 586){
             this.victory();
         }
     }
 }
-if (document.readyState == 'loading') {
-    document.addEventListener('DOMContentLoaded', ready);
-} else {
-    ready();
-}
 
 function ready() {
     let overlays = Array.from(document.getElementsByClassName('overlay-text'));
-    let game = new TheMover(45, 3);
+    let game = new TheMover(30, 3);
     
     overlays.forEach(overlay => {
         overlay.addEventListener('click', () => {
@@ -263,4 +271,5 @@ function ready() {
             game.startGame();
         });
     });
-}
+};
+ready();

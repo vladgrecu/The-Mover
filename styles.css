@@ -2,11 +2,14 @@
     font-family: 'SEGA LOGO FONT';
     font-style: normal;
     font-weight: normal;
-    src: local('SEGA.woff'), url('SEGA.woff') format('woff');
+    src: local('./fonts/SEGA.woff'), url('./fonts/SEGA.woff') format('woff');
     }
 .overlay-text {
-    top: 0;
-    left: 0;
+    height: 300px;
+    width: 600px;
+    border-radius: 2px;
+    top: calc(50% - 150px);
+    left: calc(50% - 300px);
     right: 0;
     bottom: 0;
     z-index: 100;
@@ -50,7 +53,7 @@
 #playground{
     height: 300px;
     width: 600px;
-    background-image: url('playground.jpg');
+    background-image: url('./photos/playground.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     position: absolute;
@@ -68,14 +71,14 @@
     border: 1px solid black;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px; 
-    background-image: url('flag.gif');
+    background-image: url('./photos/flag.gif');
     background-size: 60px;
     background-repeat: repeat;
 }
 #player{
     height: 15px;
     width: 15px;
-    background-image: url('player.png');
+    background-image: url('./photos/player.png');
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 50%;
@@ -89,7 +92,7 @@
     width: 15px;
     position: absolute;
     border-radius: 1px;
-    background-image: url('brickwall.jpg');
+    background-image: url('./photos/brickwall.jpg');
     background-size: 60px;
     background-repeat: repeat;
     z-index: 10;
